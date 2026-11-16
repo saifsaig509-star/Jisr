@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جسر (Jisr) – حمّل برنامج الكمبيوتر</title>
+<meta name="description" content="جسر يحوّل هاتف أندرويد إلى جسر بين أجهزة البلوتوث والكمبيوتر عبر الواي فاي: صوت، ماوس وكيبورد، يد ألعاب، حافظة، ونقل ملفات.">
+<meta name="theme-color" content="#1E6FD9">
+<link rel="icon" href="favicon.png">
+<style>
+  :root { --bg:#F3F6FB; --card:#fff; --text:#0F1B33; --muted:#51607C; --accent:#1E6FD9; --accent-d:#0A2A6B; --line:#DCE4F2; --warn-bg:#FFF6DD; --warn-line:#EBCB6B; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0B1426; --card:#12203A; --text:#E6EEFB; --muted:#9FB0CF; --accent:#4C9BFF; --accent-d:#1E6FD9; --line:#223457; --warn-bg:#2B2410; --warn-line:#7A6320; }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.75 "Segoe UI", Tahoma, system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 56px; }
+  .hero { text-align:center; padding: 28px 0 8px; }
+  .hero img { width:96px; height:96px; border-radius:22px; box-shadow:0 8px 24px rgba(10,42,107,.35); }
+  h1 { margin:14px 0 4px; font-size:2.2rem; }
+  .tag { margin:0 auto; max-width:34em; color:var(--muted); }
+  .btn { display:inline-block; margin-top:22px; padding:14px 32px; border-radius:14px; background:linear-gradient(180deg,var(--accent),var(--accent-d)); color:#fff; font-weight:700; font-size:1.1rem; text-decoration:none; box-shadow:0 6px 18px rgba(30,111,217,.35); }
+  .btn:hover { filter:brightness(1.08); }
+  .btn.alt { background:transparent; color:var(--accent); border:2px solid var(--accent); box-shadow:none; margin-inline-start:10px; }
+  .meta { margin-top:10px; color:var(--muted); font-size:.9rem; min-height:1.5em; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin-top:18px; }
+  h2 { margin:0 0 8px; font-size:1.2rem; }
+  ol, ul { margin:0; padding-inline-start:1.4em; }
+  li { margin:4px 0; }
+  .warn { background:var(--warn-bg); border-color:var(--warn-line); }
+  code { direction:ltr; unicode-bidi:embed; background:rgba(127,127,127,.15); padding:1px 6px; border-radius:6px; font-size:.92em; }
+  details summary { cursor:pointer; font-weight:600; }
+  footer { margin-top:28px; text-align:center; color:var(--muted); font-size:.9rem; }
+  footer a { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <div class="hero">
+    <img src="logo.png" alt="شعار جسر">
+    <h1>جسر <span dir="ltr">Jisr</span></h1>
+    <p class="tag">هاتفك الأندرويد يصبح جسراً بين أجهزة البلوتوث والكمبيوتر عبر الواي فاي: صوت الكمبيوتر على سماعة الهاتف، الهاتف كماوس وكيبورد، يد ألعاب، حافظة مشتركة، ونقل ملفات.</p>
+    <a id="dl" class="btn" href="#">تحميل لويندوز (Setup.exe)</a><a id="apk" class="btn alt" href="#" hidden>تطبيق الهاتف (APK)</a>
+    <div id="meta" class="meta">ويندوز 10 أو 11 (64 بت)</div>
+  </div>
+
+  <section>
+    <h2>كيف تبدأ</h2>
+    <ol>
+      <li>حمّل <code>Jisr-Setup.exe</code> وشغّله، واتبع الخطوات (اترك خيار جدار الحماية مفعّلاً).</li>
+      <li>افتح <b>Jisr</b> من قائمة ابدأ. ستظهر نافذة فيها <b>رمز PIN</b> ورمز QR.</li>
+      <li>ثبّت تطبيق «جسر» على هاتف أندرويد (8 أو أحدث) وافتحه، واضغط «مسح رمز QR» ووجّه الكاميرا نحو النافذة.</li>
+      <li>الهاتف والكمبيوتر على نفس شبكة الواي فاي. بعد الاتصال فعّل الميزة التي تريدها من التطبيق.</li>
+    </ol>
+  </section>
+
+  <section class="warn">
+    <h2>إذا ظهرت نافذة زرقاء من ويندوز</h2>
+    <p style="margin:0">الملف غير موقَّع رقمياً بعد، فيعرض ويندوز SmartScreen تحذير <bdi>Windows protected your PC</bdi>. اضغط <b><bdi>More info</bdi></b> ثم <b><bdi>Run anyway</bdi></b>. وقد يعترض بعض برامج مكافحة الفيروسات خطأً لأن البرنامج يحاكي الماوس والكيبورد ويقرأ الحافظة، وهذا هو عمله. الشفرة المصدرية متاحة في المستودع لتراجعها.</p>
+  </section>
+
+  <section>
+    <h2>معلومات تهمّك</h2>
+    <ul>
+      <li>الاتصال بين الهاتف والكمبيوتر <b>مشفّر</b> ومحمي برمز PIN، ويبقى داخل شبكتك المحلية. البرنامج لا يرسل شيئاً للإنترنت.</li>
+      <li>الجسر يعمل لكل نوع جهاز على حدة (سماعة، كيبورد، ماوس، يد، BLE، SPP) وليس محوّل بلوتوث عاماً.</li>
+      <li>الصوت له تأخير بسيط، مناسب للموسيقى والفيديو وليس للألعاب.</li>
+      <li>لا تترك الكمبيوتر مفتوحاً على شبكة عامة، وشغّله على شبكة بيتك الموثوقة.</li>
+    </ul>
+  </section>
+
+  <section>
+    <details>
+      <summary>التحقق من سلامة الملف (اختياري)</summary>
+      <p>بجانب الملف في صفحة الإصدار ملف <code>Jisr-Setup.exe.sha256</code>. من نافذة الأوامر شغّل:</p>
+      <p><code>certutil -hashfile Jisr-Setup.exe SHA256</code></p>
+      <p>يجب أن يطابق الناتج الرقم الموجود في ذلك الملف.</p>
+    </details>
+  </section>
+
+  <footer>
+    <a id="src" href="#">المصدر وكل الإصدارات على GitHub</a>
+  </footer>
+</main>
+
+<script>
+  // Normally nothing to edit: on GitHub Pages the repository is read from the page address.
+  const REPO = "";      // only if the page is hosted somewhere else, e.g. "yourname/jisr"
+  const APK_URL = "";   // optional: a link to the phone app (APK); shows a second button when set
+
+  (function () {
+    let repo = REPO;
+    const m = location.hostname.match(/^(.+)\.github\.io$/i);
+    if (!repo && m) {
+      const first = location.pathname.split("/").filter(Boolean)[0];
+      repo = m[1] + "/" + (first || (m[1] + ".github.io"));
+    }
+    const dl = document.getElementById("dl"), meta = document.getElementById("meta"), src = document.getElementById("src");
+    if (APK_URL) { const a = document.getElementById("apk"); a.href = APK_URL; a.hidden = false; }
+    if (!repo) { src.hidden = true; return; }
+
+    const base = "https://github.com/" + repo;
+    dl.href = base + "/releases/latest/download/Jisr-Setup.exe";
+    src.href = base;
+    fetch("https://api.github.com/repos/" + repo + "/releases/latest")
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(rel => {
+        const a = (rel.assets || []).find(x => x.name === "Jisr-Setup.exe");
+        const parts = [];
+        if (rel.tag_name) parts.push("الإصدار " + rel.tag_name.replace(/^v/, ""));
+        if (a) parts.push((a.size / 1048576).toFixed(0) + " ميغابايت");
+        parts.push("ويندوز 10 أو 11 (64 بت)");
+        meta.textContent = parts.join(" · ");
+      })
+      .catch(() => { /* no release yet: keep the default text */ });
+  })();
+</script>
+</body>
+</html>

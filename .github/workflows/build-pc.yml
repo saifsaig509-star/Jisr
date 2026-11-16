@@ -1,0 +1,127 @@
+name: Build PC installer
+
+# Builds Jisr-Setup.exe (the Windows installer) in the cloud - nothing has to be installed on your own PC.
+#
+#  * Test build:  Actions tab > "Build PC installer" > Run workflow. When it is green, download "Jisr-Setup"
+#                 from the bottom of the run page.
+#  * Publish:     create a release/tag named like  v1.0.0  (it must match the number in pc/VERSION).
+#                 The installer is attached to that release automatically, and the download page picks it up.
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write            # needed to attach the installer to the release
+
+jobs:
+  installer:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: pc
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Read version
+        id: ver
+        shell: pwsh
+        run: |
+          $v = (Get-Content VERSION -Raw).Trim()
+          if ($v -notmatch '^\d+\.\d+\.\d+$') { throw "pc/VERSION must look like 1.0.0 but is '$v'" }
+          if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -ne "v$v") {
+            throw "The tag $env:GITHUB_REF_NAME does not match pc/VERSION ($v). Change one of them."
+          }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          Write-Host "Version $v"
+
+      - name: Build Jisr.exe (PyInstaller)
+        shell: cmd
+        run: call build_exe.bat ci
+
+      - name: Smoke test - the program starts and opens its port
+        shell: pwsh
+        run: installer\smoke.ps1 -Exe dist\Jisr\Jisr.exe -Port 47899 -ExtraArgs "--nogui"
+
+      - name: Smoke test - window mode (informational)
+        continue-on-error: true
+        shell: pwsh
+        run: installer\smoke.ps1 -Exe dist\Jisr\Jisr.exe -Port 47898 -ExtraArgs "--minimized"
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y --no-progress
+
+      - name: Download the Arabic installer language (optional)
+        continue-on-error: true
+        shell: pwsh
+        run: Invoke-WebRequest -Uri "https://raw.githubusercontent.com/jrsoftware/issrc/main/Files/Languages/Unofficial/Arabic.isl" -OutFile installer\Arabic.isl
+
+      - name: Build Jisr-Setup.exe
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { $iscc = "$env:ProgramFiles\Inno Setup 6\ISCC.exe" }
+          $v = "${{ steps.ver.outputs.version }}"
+          & $iscc "/DMyAppVersion=$v" installer\Jisr.iss
+          if ($LASTEXITCODE -ne 0 -and (Test-Path installer\Arabic.isl)) {
+            Write-Warning "Compiling with Arabic.isl failed - trying again without it"
+            Remove-Item installer\Arabic.isl
+            & $iscc "/DMyAppVersion=$v" installer\Jisr.iss
+          }
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
+          $f = "installer\Output\Jisr-Setup.exe"
+          $hash = (Get-FileHash $f -Algorithm SHA256).Hash.ToLower()
+          "$hash  Jisr-Setup.exe" | Out-File -Encoding ascii "installer\Output\Jisr-Setup.exe.sha256"
+          Get-Content "installer\Output\Jisr-Setup.exe.sha256"
+
+      - name: Test the installer (install, check, uninstall)
+        shell: pwsh
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP "JisrInstalled"
+          $log = Join-Path $env:RUNNER_TEMP "jisr-install.log"
+          $p = Start-Process -FilePath installer\Output\Jisr-Setup.exe -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/DIR=$dir", "/LOG=$log" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content $log -Tail 40; throw "The installer exited with code $($p.ExitCode)" }
+          if (-not (Test-Path "$dir\Jisr.exe")) { throw "Jisr.exe is missing after the installation" }
+          Write-Host "Installed OK"
+          Start-Process -FilePath "$dir\unins000.exe" -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" | Out-Null
+          $gone = $false
+          for ($i = 0; $i -lt 30 -and -not $gone; $i++) {
+            Start-Sleep -Seconds 1
+            $gone = -not (Test-Path "$dir\Jisr.exe")
+          }
+          if (-not $gone) { throw "Jisr.exe is still there 30 seconds after the uninstall" }
+          Write-Host "Uninstalled OK"
+
+      - name: Keep the installer as a download of this run
+        if: ${{ !cancelled() && hashFiles('pc/installer/Output/Jisr-Setup.exe') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Jisr-Setup
+          path: |
+            pc/installer/Output/Jisr-Setup.exe
+            pc/installer/Output/Jisr-Setup.exe.sha256
+
+      - name: Attach the installer to the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          $exe = "installer\Output\Jisr-Setup.exe"
+          $sum = "installer\Output\Jisr-Setup.exe.sha256"
+          $notes = Join-Path $env:GITHUB_WORKSPACE ".github\release-notes.md"
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $exe $sum --clobber
+          } else {
+            gh release create $tag $exe $sum --title "Jisr $tag" --notes-file $notes
+          }
+          if ($LASTEXITCODE -ne 0) { throw "Could not publish the release" }

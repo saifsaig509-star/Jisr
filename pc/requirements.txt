@@ -1,0 +1,6 @@
+cryptography    # REQUIRED: encrypts the phone <-> PC connection
+# Optional features (the program runs without them):
+PyAudioWPatch   # PC audio -> phone -> Bluetooth headphones
+vgamepad        # game mode: phone-connected gamepad -> virtual Xbox 360 pad (also needs the ViGEmBus driver)
+pystray         # system-tray icon
+pillow          # needed by pystray

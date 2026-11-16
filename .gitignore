@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+pc/build/
+pc/dist/
+pc/*.spec
+pc/installer/Output/
+pc/installer/Arabic.isl
+pc/installer/version_info.txt
